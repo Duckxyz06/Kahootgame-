@@ -5,6 +5,10 @@ import path from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {Server} from 'socket.io';
 import QRCode from 'qrcode';
+import multer from 'multer';
+import mammoth from 'mammoth';
+import pdfParse from 'pdf-parse/lib/pdf-parse.js';
+import {parseQuizText} from './importer.js';
 import {points} from './scoring.js';
 import {validateQuiz,nicknameValid} from './validation.js';
 import {listQuizzes,getQuiz,saveQuiz,isPersistent} from './store.js';
@@ -67,6 +71,18 @@ app.get('/api/qr/:pin',async(req,res)=>{try{
  const url=(process.env.PUBLIC_URL||req.protocol+'://'+req.get('host'))+'/?pin='+pin;
  res.json({url,dataUrl:await QRCode.toDataURL(url)});
  }catch{res.status(500).json({error:'QR'})}});
+const upload=multer({storage:multer.memoryStorage(),limits:{fileSize:8*1024*1024,files:1}});
+app.post('/api/import',upload.single('file'),async(req,res)=>{
+ if(!sessions.has(String(req.get('x-host-token')||'')))return res.status(401).json({error:'Host chưa đăng nhập'});
+ if(!req.file)return res.status(400).json({error:'Chưa chọn tệp'});
+ const name=req.file.originalname.toLowerCase();
+ if(!name.endsWith('.pdf')&&!name.endsWith('.docx'))return res.status(400).json({error:'Chỉ hỗ trợ PDF và DOCX'});
+ try {
+  const content=name.endsWith('.docx')?(await mammoth.extractRawText({buffer:req.file.buffer})).value:(await pdfParse(req.file.buffer)).text;
+  if(!content||content.trim().length<30)return res.status(422).json({error:'Không trích xuất được văn bản. PDF dạng ảnh quét cần OCR, hiện chưa hỗ trợ.'});
+  res.json(parseQuizText(content));
+ }catch(e){res.status(422).json({error:'Không đọc được tệp: '+e.message})}
+});
 app.get('/api/results/:pin', (req,res)=>{
  const r=getRoom({pin:req.params.pin,token:req.query.token});
  if(!r)return res.status(403).send('Forbidden');
