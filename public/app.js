@@ -75,10 +75,25 @@ socket.on('h:board',r=>{setControls('BOARD');const a=get('game-area');if(a)a.inn
 socket.on('h:over',r=>{setControls('OVER');const a=get('game-area');if(a)a.innerHTML='<h2>🎉 Hoàn thành!</h2><div class="podium">'+[r.podium[1],r.podium[0],r.podium[2]].map((p,i)=>'<div>'+['🥈','🥇','🥉'][i]+'<h3>'+esc(p?.name||'–')+'</h3><b>'+esc(p?.score||0)+'</b></div>').join('')+'</div><p><a class="btn" href="/api/results/'+pin+'?token='+encodeURIComponent(hostToken)+'">Xuất CSV</a></p>'});
 let quiz={title:'Bộ câu hỏi của tôi',questions:[{text:'',choices:['',''],correct:0,durationSec:20,img:''}]};
 function blank(){return {text:'',choices:['',''],correct:0,durationSec:20,img:''}}
-function editor(){if(!token)return hostLogin();layout('<div class="row space"><h1>✎ Soạn bộ câu hỏi</h1><a class="btn outline" href="/host">← Quay về Host</a></div><div class="panel"><label>Tên bộ câu hỏi<input id="title" class="field" maxlength="100"></label><div id="questions"></div><div class="row"><button class="btn outline" id="add">+ Thêm câu</button><button class="btn" id="save">Lưu bộ đề lên server</button><button class="btn outline" id="download">Xuất JSON</button><label class="btn outline">Nhập JSON<input id="upload" type="file" accept=".json" hidden></label></div><p id="message"></p><p class="muted">Chỉ lưu bền vững nếu server có DATABASE_URL PostgreSQL.</p></div>');
+function editor(){if(!token)return hostLogin();layout('<div class="row space"><h1>✎ Soạn bộ câu hỏi</h1><a class="btn outline" href="/host">← Quay về Host</a></div><div class="panel"><label>Tên bộ câu hỏi<input id="title" class="field" maxlength="100"></label><div id="questions"></div><div class="row"><button class="btn outline" id="add">+ Thêm câu</button><button class="btn" id="save">Lưu bộ đề lên server</button><button class="btn outline" id="download">Xuất JSON</button><label class="btn outline">Nhập DOCX/PDF<input id="document-upload" type="file" accept=".pdf,.docx" hidden></label><label class="btn outline">Nhập JSON<input id="upload" type="file" accept=".json" hidden></label></div><p id="message"></p><p class="muted">Chỉ lưu bền vững nếu server có DATABASE_URL PostgreSQL.</p></div>');
  get('add').onclick=()=>{quiz.questions.push(blank());renderQuestions()};
  get('save').onclick=async()=>{collect();const r=await call('quiz:save',{token,quiz});toast(r.ok?(r.temporary?'Đã lưu tạm trên server (chưa có database)':'Đã lưu trong PostgreSQL. ID: '+r.id):r.error,!r.ok)};
  get('download').onclick=()=>{collect();const link=document.createElement('a');link.href=URL.createObjectURL(new Blob([JSON.stringify(quiz,null,2)],{type:'application/json'}));link.download='quizvn-questions.json';link.click();URL.revokeObjectURL(link.href)};
+ get('document-upload').onchange=async e=>{
+  const file=e.target.files?.[0];if(!file)return;
+  if(file.size>8*1024*1024)return toast('Giới hạn 8 MB/tệp',true);
+  toast('Đang đọc tệp...');
+  const body=new FormData();body.append('file',file);
+  try{
+   const response=await fetch('/api/import',{method:'POST',headers:{'x-host-token':token},body});
+   const result=await response.json();
+   if(!response.ok)throw Error(result.error);
+   if(!result.questions.length)throw Error('Không nhận diện được câu hỏi. Mẫu: Câu 1: ... A. ... B. ... Đáp án: A');
+   collect();quiz.questions=result.questions.map(q=>({text:q.text,choices:q.choices,correct:q.correct,durationSec:q.durationSec,img:q.img}));
+   renderQuestions();
+   toast('Đã nhập '+result.detected+' câu. '+(result.warnings.length?'Cần kiểm tra thủ công: '+result.warnings.join('; '):'Vui lòng rà soát đáp án trước khi lưu.'),!!result.warnings.length);
+  }catch(error){toast(error.message,true)}
+ };
  get('upload').onchange=async e=>{try{const imported=JSON.parse(await e.target.files[0].text());if(!Array.isArray(imported.questions))throw Error('Không có câu hỏi');quiz=imported;renderQuestions()}catch(e){toast('Tệp JSON không hợp lệ: '+e.message,true)}};
  loadQuizList();renderQuestions();
 }
