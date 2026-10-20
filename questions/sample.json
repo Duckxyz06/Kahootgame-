@@ -1,0 +1,115 @@
+{
+  "title": "Khám phá Việt Nam",
+  "questions": [
+    {
+      "text": "Thủ đô của Việt Nam là thành phố nào?",
+      "choices": [
+        "Hà Nội",
+        "Huế",
+        "Đà Nẵng",
+        "TP. Hồ Chí Minh"
+      ],
+      "correct": 0,
+      "durationSec": 20
+    },
+    {
+      "text": "Quốc khánh Việt Nam được tổ chức ngày nào?",
+      "choices": [
+        "30/4",
+        "2/9",
+        "1/5",
+        "20/11"
+      ],
+      "correct": 1,
+      "durationSec": 20
+    },
+    {
+      "text": "Đồng bằng sông Cửu Long còn được gọi là gì?",
+      "choices": [
+        "Tây Bắc",
+        "Miền Trung",
+        "Đồng bằng Nam Bộ",
+        "Tây Nguyên"
+      ],
+      "correct": 2,
+      "durationSec": 20
+    },
+    {
+      "text": "Ai là tác giả Truyện Kiều?",
+      "choices": [
+        "Nguyễn Du",
+        "Nguyễn Trãi",
+        "Xuân Diệu",
+        "Hồ Xuân Hương"
+      ],
+      "correct": 0,
+      "durationSec": 20
+    },
+    {
+      "text": "Đơn vị tiền tệ chính thức của Việt Nam?",
+      "choices": [
+        "Baht",
+        "Đô la",
+        "Đồng",
+        "Yên"
+      ],
+      "correct": 2,
+      "durationSec": 15
+    },
+    {
+      "text": "Đỉnh Phan Xi Păng thuộc dãy núi nào?",
+      "choices": [
+        "Trường Sơn",
+        "Hoàng Liên Sơn",
+        "Bạch Mã",
+        "Tam Đảo"
+      ],
+      "correct": 1,
+      "durationSec": 20
+    },
+    {
+      "text": "Biển Đông nằm ở phía nào của Việt Nam?",
+      "choices": [
+        "Tây",
+        "Bắc",
+        "Đông",
+        "Nam"
+      ],
+      "correct": 2,
+      "durationSec": 15
+    },
+    {
+      "text": "Nhạc cụ nào sau đây có nguồn gốc truyền thống Việt Nam?",
+      "choices": [
+        "Đàn bầu",
+        "Violin",
+        "Piano",
+        "Saxophone"
+      ],
+      "correct": 0,
+      "durationSec": 20
+    },
+    {
+      "text": "Thành phố nào nổi tiếng với cầu Rồng?",
+      "choices": [
+        "Hải Phòng",
+        "Cần Thơ",
+        "Đà Nẵng",
+        "Huế"
+      ],
+      "correct": 2,
+      "durationSec": 20
+    },
+    {
+      "text": "Tết Nguyên đán thường tính theo loại lịch nào?",
+      "choices": [
+        "Dương lịch",
+        "Âm lịch",
+        "Lịch Julius",
+        "Lịch học"
+      ],
+      "correct": 1,
+      "durationSec": 20
+    }
+  ]
+}
