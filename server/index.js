@@ -61,6 +61,7 @@ function board(r){
 }
 app.get('/health',(_,res)=>res.json({ok:true,database:isPersistent()?'postgres':'memory'}));
 app.use(express.static(path.join(path.dirname(fileURLToPath(import.meta.url)),'../public')));
+app.get(['/host','/editor'],(_req,res)=>res.sendFile(path.join(path.dirname(fileURLToPath(import.meta.url)),'../public/index.html')));
 app.get('/api/qr/:pin',async(req,res)=>{try{
  const pin=String(req.params.pin);if(!/^\d{6}$/.test(pin))return res.status(400).json({error:'PIN'});
  const url=(process.env.PUBLIC_URL||req.protocol+'://'+req.get('host'))+'/?pin='+pin;
