@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: quizvn
+    runtime: docker
+    plan: starter
+    healthCheckPath: /health
+    envVars:
+      - key: HOST_PASSWORD
+        sync: false
+      - key: DATABASE_URL
+        sync: false
